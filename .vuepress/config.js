@@ -1,11 +1,10 @@
 const path = require('path')
 
 module.exports = {
-  title: `Hanson's Memo`,
+  title: `Hansonの备忘录`,
   description: '',
-  dest: 'public',
   head: [
-    ['link', { name: 'icon', href: '/avatar.jpg' }],
+    ['link', { name: 'icon', href: '/favicon.ico' }],
     [
       'meta',
       {
@@ -20,17 +19,17 @@ module.exports = {
     modePicker: false,
     nav: [
       {
-        text: 'Home',
+        text: '主页',
         link: '/',
         icon: 'reco-home',
       },
       {
-        text: 'TimeLine',
+        text: '时间线',
         link: '/timeline/',
         icon: 'reco-date',
       },
       {
-        text: 'Contact',
+        text: '联系我',
         icon: 'reco-message',
         items: [
           {
@@ -50,16 +49,16 @@ module.exports = {
     blogConfig: {
       category: {
         location: 2,
-        text: 'Category',
+        text: '分类',
       },
       tag: {
         location: 3,
-        text: 'Tag',
+        text: '标签',
       },
     },
     search: true,
     searchMaxSuggestions: 10,
-    lastUpdated: 'Last Updated',
+    lastUpdated: '最近更新时间',
     author: 'Hanson',
     authorAvatar: '/avatar.jpg',
     startYear: '2021',
@@ -67,17 +66,4 @@ module.exports = {
   markdown: {
     lineNumbers: true,
   },
-  plugins: [
-    [
-      '@vuepress/plugin-register-components',
-      {
-        components: [
-          {
-            name: 'reco-home-page',
-            path: path.resolve(__dirname, './components/HomePage.vue'),
-          },
-        ],
-      },
-    ],
-  ],
 }
