@@ -28,7 +28,7 @@
           <h4>最近活跃</h4>
           <ul>
             <li class="article-item" v-for="article in articleList" :key="article.key">
-              <a :href="article.path">
+              <a :href="$withBase(article.path)">
                 <div>{{ article.title }}</div>
                 <div>
                   <i class="iconfont reco-date" v-if="article.lastUpdated">
@@ -36,6 +36,7 @@
                   </i>
                   <i
                     class="tags iconfont reco-tag"
+                    style="margin-left: 8px"
                     v-if="article.frontmatter && article.frontmatter.tags"
                   >
                     <span class="article-tag" v-for="tag in article.frontmatter.tags" :key="tag">
@@ -56,7 +57,7 @@
             </h4>
             <ul class="category-wrapper">
               <li v-for="category in categoryList" :key="category.key" class="category-item">
-                <a :href="category.path">
+                <a :href="$withBase(category.path)">
                   <span>{{ category.key }}</span>
                   <span class="category-item--count" :style="{ background: getRandomColor() }">
                     {{ category.count }}
@@ -77,7 +78,7 @@
                 class="tag-item"
                 :style="{ background: getRandomColor() }"
               >
-                <a :href="tag.path">{{ tag.key }}</a>
+                <a :href="$withBase(tag.path)">{{ tag.key }}</a>
               </li>
             </ul>
           </div>
