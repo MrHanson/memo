@@ -1,6 +1,7 @@
 const path = require('path')
 
 module.exports = {
+  base: '/memo/',
   title: `Hansonの备忘录`,
   description: '',
   head: [

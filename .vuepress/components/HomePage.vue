@@ -326,13 +326,22 @@ export default {
   }
 }
 
-@media (max-width: $MQMobileNarrow) {
+@media (max-width: 719px) {
   .home-page-wrapper {
     section {
       padding: 0 2rem;
 
       &.main {
         height: 580px;
+      }
+    }
+
+    .home-article-wrapper {
+      display: block !important;
+
+      .info-wrapper {
+        margin-left: 0 !important;
+        margin-top: 15px;
       }
     }
   }
