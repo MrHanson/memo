@@ -1,13 +1,11 @@
 ---
-title: 八大排序算法js实现
+title: 常见排序算法js实现
 date: 2021-02-21
 tags:
   - sort
 categories:
   - algorithm
 ---
-
-### 八大排序归纳
 
 ```javascript
 // 数组元素位置交换函数
@@ -18,11 +16,11 @@ function swap(arr, i, j) {
 }
 ```
 
-#### 稳定排序 Stable
+### 稳定排序 Stable
 
 - 若 arr[i] === arr[i +1]，排序后相对次序不改变
 
-##### 冒泡排序 Bubble
+### 冒泡排序 Bubble
 
 - 时间复杂度 O(n^2)
 
@@ -45,7 +43,7 @@ function bubbleSort(arr) {
 }
 ```
 
-##### 选择排序
+### 选择排序
 
 - 时间复杂度 O(n^2)
 
@@ -68,28 +66,101 @@ function selectionSort(arr) {
 }
 ```
 
-##### 插入排序
+### 插入排序
 
 - 时间复杂度 最好 O(n) 最坏 O(n^2)
+
+#### 简易版
 
 ```javascript
 /** 选择排序
  * @param [Array] arr
  **/
-function insertionSort(arr) {
-  if (arr === null || arr.length < 2) {
+function insertSort(arr) {
+  const len = arr.length
+  if (arr === null || len < 2) {
     return
   }
-  // 保证数组坐标0 ~ i - 1已经有序
-  for (let i = 1; i < arr.length; i++) {
-    for (let j = i - 1; j >= 0 && arr[j] > arr[j + 1]; j--) {
-      swap(arr, j, j + 1)
+
+  let preIdx
+  let cur
+  for (let i = 1; i < len; i++) {
+    preIdx = i - 1
+    cur = arr[i]
+
+    while (preIdx >= 0 && arr[preIdx] > cur) {
+      arr[preIdx + 1] = arr[preIdx]
+      preIdx--
     }
+
+    arr[preIdx + 1] = cur
   }
+
+  return arr
 }
 ```
 
-##### 归并排序
+#### 二分法优化版
+
+```javascript
+const insertSort = arr.reduce(insert, [])
+
+const insert = (sortedArr, val) => {
+  const len = sortedArr.length
+
+  if (!len) {
+    sortedArr.push(val)
+    return sortedArr
+  }
+
+  let i = 0
+  let j = len
+  let mid
+
+  if (val < sortedArr[i]) {
+    sortedArr.unshift(val)
+    return sortedArr
+  }
+
+  if (val >= sortedArr[len - 1]) {
+    sortedArr.push(val)
+    return sortedArr
+  }
+
+  while (i < j) {
+    mid = ((j + i) / 2) | 0
+
+    if (i === mid) {
+      break
+    }
+
+    if (val < sortedArr[mid]) {
+      j = mid
+    }
+
+    if (val === sortedArr[mid]) {
+      i = mid
+      break
+    }
+
+    if (val > sortedArr[mid]) {
+      i = mid
+    }
+  }
+
+  let midArr = [val]
+  let lastArr = srotedArr.slice(i + 1)
+
+  sortedArr = sortedArr
+    .slice(0, i + 1)
+    .concat(midArr)
+    .concat(lastArr)
+
+  return sortedArr
+}
+```
+
+### 归并排序
 
 - 时间复杂度 O(nlogn) 辅助空间 O(n)
 
@@ -150,47 +221,97 @@ function merge(arr, L, mid, R) {
 }
 ```
 
-##### 快速排序
+### 快速排序
 
 - 时间复杂度 O(nlogn) 额外空间复杂的 O(logn)
 
+- 特点：分治策略。在数组中选取一个基准点 pivot，小于基准点的放左边，大于放右边。
+
+#### 最简单实现
+
+> 空间可优化
+
 ```javascript
 /**
- * @param Array arr
- * @param Number L
- * @param NUmber R
+ * @param {Array}arr
+ * @return {Array}
  **/
-function quickSort(arr, L, R) {
-  if (arr === null || arr.length < 2) {
-    return
+const quickSort = arr => {
+  if (arr.length < 2) {
+    return arr.slice()
   }
 
-  if (L < R) {
-    swap(arr, L + Math.floor((Math.random() + 1) * (R - L + 1)), R)
-    let p = partition(arr, L, R)
-    quickSort(arr, L, p[0] - 1)
-    quickSort(arr, p[1] + 1, R)
-  }
-}
+  const pivot = arr[Math.floor(Math.random() * arr.length)]
 
-function partition(arr, L, R) {
-  let less = L - 1
-  let more = R + 1
-  while (L < more) {
-    if (arr[L] < arr[R]) {
-      swap(arr, ++less, L++)
-    } else if (arr[L] > arr[R]) {
-      swap(arr, --more, L)
+  const left = []
+  const middle = []
+  const right = []
+
+  for (let i = 0; i < arr.length; i++) {
+    const curVal = arr[i]
+    if (curVal < pivot) {
+      left.push(curVal)
+    } else if (curVal > pivot) {
+      right.push(curVal)
     } else {
-      L++
+      middle.push(curVal)
     }
   }
-  swap(arr, more, R)
-  return new Array(less + 1, more)
+
+  return quickSort(left).concat(middle, quickSort(right))
 }
 ```
 
-##### 堆排序
+#### 原地(in-place)操作
+
+```javascript
+/**
+ * @param {Array}arr
+ * @param Number L
+ * @param NUmber R
+ * @return {Array}
+ **/
+const quickSort = (arr, L, R) => {
+  L = L === void 0 ? 0 : L
+  R = R === void 0 ? arr.length - 1 : R
+
+  if (start >= end) {
+    return
+  }
+
+  let val = arr[L]
+  let i = L
+  let j = R
+
+  while (i < j) {
+    // 找到右边第一个小于基准点的下标并记录
+    while (i < j && arr[j] >= val) {
+      j--
+    }
+
+    if (i < j) {
+      arr[i++] = arr[j]
+    }
+
+    // 找到左边第一个大于基准点的下标并记录
+    while (i < j && arr[i] < val) {
+      i++
+    }
+
+    if (i < j) {
+      arr[j--] = arr[i]
+    }
+  }
+
+  // 确定val的位置
+  arr[i] = val
+
+  quickSort(arr, L, i - 1)
+  quickSort(arr, i + 1, R)
+}
+```
+
+### 堆排序
 
 - 时间复杂度 O(logn)
 
@@ -200,7 +321,7 @@ function partition(arr, L, R) {
  * @param Number L
  * @param NUmber R
  **/
-function heapSort(arr, L, R) {
+function heapS ort(arr, L, R) {
   if (!isArray(arr) || arr.length < 2) {
     return
   }
