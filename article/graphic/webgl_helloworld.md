@@ -11,28 +11,30 @@ categories:
 
 - WebGL 以 Canvas 作为载体，需要两种着色器来实现图形的各种渲染
 
-  - 定点着色器（vertexShader）
-  - 片元着色器（fragmentShader）
+  - 定点着色器（vertexShader）：用来描述顶点特性（如位置、颜色等）等程序
+  - 片元着色器（fragmentShader）：进行逐片元处理过程如光照的程序。可以将片元理解为像素（图像的单元）
 
-![shader](https://upload-images.jianshu.io/upload_images/1632709-709f62c5de514a34.png?imageMogr2/auto-orient/strip|imageView2/2/format/webp)
+![webgl app](https://upload-images.jianshu.io/upload_images/1632709-709f62c5de514a34.png?imageMogr2/auto-orient/strip|imageView2/2/format/webp)
 
-- 着色器由强类型语言 GLSL（openGL Shader Language）编写而成
+- 着色器程序由强类型语言 GLSL（openGL Shader Language）编写而成，以字符串的形式“嵌入”在 JavaScript 文件中的，在程序真正开始运行前它就已经设置好了
+
+![shader](https://upload-images.jianshu.io/upload_images/1632709-0d4112864ac9936c.png?imageMogr2/auto-orient/strip|imageView2/2/w/310/format/webp)
 
 ### GLSL 内置属性及变量类型
 
 #### 变量类型
 
+- `attribute`: 只有定点着色器可用的属性，传输与顶点相关的数据；
+
+- `uniform`: 全局变量，传输与所有顶点都相同（或与顶点无关）的数据
+
+- `varying`: 从顶点着色器向片元着色器传输数据
+
+![variable passing1](https://upload-images.jianshu.io/upload_images/1632709-6eda06c3874c8772.png?imageMogr2/auto-orient/strip|imageView2/2/w/1045/format/webp)
+
+![variable passing2](https://upload-images.jianshu.io/upload_images/1632709-a394766d5337419e.png?imageMogr2/auto-orient/strip|imageView2/2/w/760/format/webp)
+
 - vec4：包含四个浮点元素的`容器类型`,类似的还有 vec2、vec3
-
-#### 一般用于定点着色器
-
-- gl_Position：所接收的坐标所在坐标系是`裁剪坐标系`，包含 X, Y, Z，W 四个坐标分量，顶点着色器接收到这个坐标之后，对它进行透视除法，即将各个分量同时除以 W，转换成 NDC 坐标，NDC 坐标每个分量的取值范围都在【-1, 1】之间
-
-- gl_PointSize：绘制到屏幕的点的大小
-
-#### 一般用于片元着色器
-
-- gl_FragColor：片元颜色，包含 R, G, B, A 四个颜色分量，且每个分量的取值范围在【0,1】之间
 
 ### WebGL 应用创建流程
 
