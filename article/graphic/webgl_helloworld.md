@@ -36,6 +36,10 @@ categories:
 
 - vec4：包含四个浮点元素的`容器类型`,类似的还有 vec2、vec3
 
+### 缓冲区
+
+![buffer](https://upload-images.jianshu.io/upload_images/1632709-134fdbb121274795.png?imageMogr2/auto-orient/strip|imageView2/2/w/1150/format/webp)
+
 ### WebGL 应用创建流程
 
 - 获取上下文
