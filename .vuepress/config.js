@@ -17,6 +17,7 @@ module.exports = {
   theme: 'reco',
   themeConfig: {
     type: 'HomePage',
+    mode: 'light',
     modePicker: false,
     nav: [
       {
