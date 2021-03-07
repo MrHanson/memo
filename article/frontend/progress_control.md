@@ -15,18 +15,24 @@ categories:
 LazyMan('Hank')
 // Hi! This is Hank!
 
-LazyMan('Hank').sleep(10).eat('dinner')
+LazyMan('Hank')
+  .sleep(10)
+  .eat('dinner')
 // Hi! This is Hank!
 // 等待 10s
 // Wake up after 10
 // Eat dinner~
 
-LazyMan('Hank').eat('dinner').eat('supper')
+LazyMan('Hank')
+  .eat('dinner')
+  .eat('supper')
 // Hi! This is Hank!
 // Eat dinner
 // Eat supper~
 
-LazyMan('Hank').sleepFirst(5).eat('supper')
+LazyMan('Hank')
+  .sleepFirst(5)
+  .eat('supper')
 // 等待5s
 // Wake up after 5
 // Hi! This is Hank!
@@ -50,16 +56,30 @@ class LazyManGennerator {
   constructor(name) {
     this.tasks = []
 
-    const task = () => {
-      console.log(`Hi! This is${name}!`)
-      this._next()
-    }
-
-    this.tasks.push(task)
+    this._addTack(() => console.log(`Hi! This is${name}!`))
 
     window.setTimeout(() => {
       this._next()
     }, 0)
+  }
+
+  _addTask(callback, piror = false, async = false, delay = 0) {
+    let task = () => {
+      callback && callback()
+      this._next()
+    }
+
+    if (async) {
+      task = () => {
+        window.setTime(task, delay)
+      }
+    }
+
+    if (piror) {
+      this.tasks.unshift(task)
+    } else {
+      this.tasks.push(task)
+    }
   }
 
   _next() {
@@ -68,27 +88,18 @@ class LazyManGennerator {
   }
 
   _sleepTask(time, piror) {
-    const task = () => {
-      window.setTimeout(() => {
+    this._addTask(
+      () => {
         console.log(`Wake up after ${time}`)
-        this._next()
-      }, time)
-    }
-    if (piror) {
-      this.tasks.unshift(task)
-    } else {
-      this.tasks.push(task)
-    }
+      },
+      piror,
+      true,
+      time,
+    )
   }
 
   eat(name) {
-    const task = () => {
-      console.log(`Eat ${name}`)
-      this._next()
-    }
-
-    this.tasks.push(task)
-
+    this._addTask(() => console.log(`Eat ${name}`))
     return this
   }
 
@@ -111,7 +122,7 @@ function LazyMan(name) {
 
 ```javascript
 class LazyManGennerator {
-  queue: any[] = []
+  queue: Array<Function> = []
   name: string
   constructor(name) {
     this.name = name
@@ -164,26 +175,57 @@ const LazyMan = name => new LazyManGennerator(name)
 
 ### 流程控制在前端应用相当广泛，从日常业务到框架，库底层，无处不在
 
-- 再举个 🌰，实际业务需求中，经常有只需要最后一次请求结果（比如搜索）的场景。因此可以编写一个高阶函数，传递旧请求方法（执行后返回 promise）,返回一个新方法。连续触发时，若上一次 promise 未结束则直接废弃，只有最后一次 promise 会触发`then/reject`
+- Node.js http 请求类库[connect](https://github1s.com/senchalabs/connect/blob/master/index.js)
+
+  - 内部维护一个队列`stacks`维护通过`app.use`添加的中间件
+  - 然后依次递归调用`next`方法依次出栈
+
+- [express](https://github1s.com/expressjs/express/blob/HEAD/lib/express.js) 则是`connect`的升级版
+
+> 以上两种通过`stacks`维护中间件方式，在遇到异步中间件时会稍显无力。于是也遍有了 [Koa.js](https://github1s.com/koajs/compose/blob/HEAD/index.js) 以及其著名的`洋葱模型`
+
+- 简单分析一下`Koa.js`的`洋葱模型`
+
+下面是核心函数 compose 函数的源码
 
 ```javascript
-// 事例
-// let count = 1
-// let promiseFunction = () =>
-//   new Promise(rs =>
-//     setTimeout(() => {
-//       rscount++
-//     }),
-//   )
-// let lastFn = lastPromise(promiseFunction)
-/**
- * @param {Function} promiseFunction
- * @example () => fetch('data')
- **/
+function compose(middleware) {
+  if (!Array.isArray(middleware)) throw new TypeError('Middleware stack must be an array!')
+  for (const fn of middleware) {
+    if (typeof fn !== 'function') throw new TypeError('Middleware must be composed of functions!')
+  }
 
-function lastPromise(promiseFunction) {
-  // to do
+  /**
+   * @param {Object} context
+   * @return {Promise}
+   * @api public
+   */
+
+  return function(context, next) {
+    // last called middleware # 记录最后调用中间件的索引
+    let index = -1
+    // 执行第一个中间件
+    return dispatch(0)
+    function dispatch(i) {
+      if (i <= index) return Promise.reject(new Error('next() called multiple times'))
+      index = i
+      // 取出当前中间件函数
+      let fn = middleware[i]
+
+      // 执行到圆心
+      if (i === middleware.length) fn = next
+      if (!fn) return Promise.resolve()
+      try {
+        // 传入dispatch作为next参展，以调用下一中间件
+        return Promise.resolve(fn(context, dispatch.bind(null, i + 1)))
+      } catch (err) {
+        return Promise.reject(err)
+      }
+    }
+  }
 }
 ```
 
-- 著名 Nodejs MVC 框架 Koa.js...
+- 生成器自动执行类库 [co](https://github.com/tj/co)
+- 状态管理类库 redux
+- so on...
