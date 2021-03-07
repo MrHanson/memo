@@ -39,6 +39,7 @@ categories:
     - Etag (优先级较高)
       - Etag
         > 响应头（response headers），返回当前资源文件的一个唯一标识(由服务器生成)
+        - etag 的生成策略，参考中间件[koa-etag](https://github.com/koajs/etag)
       - If-None-Match
         > 请求头（request headers）字段，客户端再次发起该请求时，携带上次请求返回的唯一标识 Etag 值，通过此字段值告诉服务器该资源上次请求返回的唯一标识值。服务器收到该请求后，发现该请求头中含有 If-None-Match，则会根据 If-None-Match 的字段值与该资源在服务器的 Etag 值做对比，一致则返回 304，代表资源无更新，继续使用缓存文件；不一致则重新返回资源文件，状态码为 200。If-Modified-Since > 请求头（request headers）字段
 
