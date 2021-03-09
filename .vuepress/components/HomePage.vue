@@ -25,14 +25,17 @@
     <ModuleTransition delay="0.24" v-if="articleList.length">
       <section class="home-article-wrapper">
         <div class="article-list">
-          <h4>最近活跃</h4>
+          <h4>
+            <i class="iconfont reco-blog"></i>
+            最近活跃
+          </h4>
           <ul>
             <li class="article-item" v-for="article in articleList" :key="article.key">
               <a :href="$withBase(article.path)">
-                <div>{{ article.title }}</div>
+                <div class="article-item--title">{{ article.title }}</div>
                 <div>
                   <i class="iconfont reco-date" v-if="article.lastUpdated">
-                    {{ article.lastUpdated }}
+                    {{ article.frontmatter && article.frontmatter.date | time }}
                   </i>
                   <i
                     class="tags iconfont reco-tag"
@@ -56,10 +59,17 @@
               分类
             </h4>
             <ul class="category-wrapper">
-              <li v-for="category in categoryList" :key="category.key" class="category-item">
+              <li v-for="(category, idx) in categoryList" :key="category.key" class="category-item">
                 <a :href="$withBase(category.path)">
                   <span>{{ category.key }}</span>
-                  <span class="category-item--count" :style="{ background: getRandomColor() }">
+                  <span
+                    class="category-item--count"
+                    :style="{
+                      background: getRandomColor(
+                        (categoryList.length - idx + 3) / categoryList.length,
+                      ),
+                    }"
+                  >
                     {{ category.count }}
                   </span>
                 </a>
@@ -73,10 +83,10 @@
             </h4>
             <ul class="tag-wrapper">
               <li
-                v-for="tag in tagList"
+                v-for="(tag, idx) in tagList"
                 :key="tag.key"
                 class="tag-item"
-                :style="{ background: getRandomColor() }"
+                :style="{ background: getRandomColor((tagList.length - idx + 3) / tagList.length) }"
               >
                 <a :href="$withBase(tag.path)">{{ tag.key }}</a>
               </li>
@@ -90,8 +100,16 @@
 
 <script>
 import { ModuleTransition } from '@vuepress-reco/core/lib/components'
+import dayjs from 'dayjs'
+
 export default {
   components: { ModuleTransition },
+
+  filters: {
+    time(val) {
+      return dayjs(val).format('YYYY/MM/DD')
+    },
+  },
 
   computed: {
     articleList() {
@@ -104,11 +122,15 @@ export default {
     categoryList() {
       const hashTbl = (this.$categories && this.$categories._metaMap) || {}
 
-      return Object.entries(hashTbl).map(([k, v]) => ({
+      const ret = Object.entries(hashTbl).map(([k, v]) => ({
         key: k,
         path: v.path,
         count: (v.pages && v.pages.length) || 0,
       }))
+
+      // 按分类个数降序排列
+      ret.sort((a, b) => b.count - a.count)
+      return ret
     },
     tagList() {
       const hashTbl = (this.$tags && this.$tags._metaMap) || {}
@@ -118,9 +140,10 @@ export default {
   },
 
   methods: {
-    getRandomColor() {
-      const random = () => Math.random() * 255
-      return `rgb(${random()}, ${random()}, ${random()})`
+    getRandomColor(apha) {
+      const themeColor = `22, 44, 90`
+      console.log(apha)
+      return `rgba(${themeColor}, ${apha})`
     },
   },
 }
@@ -238,6 +261,33 @@ export default {
 
           &:hover {
             box-shadow: var(--box-shadow-hover);
+          }
+
+          &--title {
+            position: relative;
+            font-size: 1.28rem;
+            line-height: 46px;
+            display: inline-block;
+
+            &:after {
+              content: '';
+              position: absolute;
+              width: 100%;
+              height: 2px;
+              bottom: 0;
+              left: 0;
+              background-color: #16305a;
+              visibility: hidden;
+              transform: scaleX(0);
+              transition: 0.3s ease-in-out;
+            }
+
+            &:hover {
+              &:after {
+                visibility: visible;
+                transform: scaleX(1);
+              }
+            }
           }
         }
 

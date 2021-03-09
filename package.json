@@ -12,6 +12,7 @@
   },
   "description": "mark down something about me",
   "dependencies": {
+    "dayjs": "^1.10.4",
     "three": "^0.125.2"
   }
 }
