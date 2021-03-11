@@ -16,7 +16,7 @@ categories:
     - 快速读取
     - 时效性
   - 硬盘缓存 (from disk cache)
-  - service worker
+  - [service worker](https://x5.tencent.com/product/service-worker.html)
 
 - 按策略分类
   - 强缓存
@@ -56,4 +56,5 @@ categories:
 
 ## 参考文献
 
-[彻底理解浏览器缓存](https://juejin.cn/post/6844903593275817998) [浏览器缓存机制剖析](https://mp.weixin.qq.com/s?__biz=MjM5MTA1MjAxMQ==&mid=2651226347&idx=1&sn=6dbccc54406f0b075671884b738b1e88&chksm=bd49596f8a3ed079f79cda4b90ac3cb3b1dbdb5bfb8aade962a16a323563bf26a0c75b0a5d7b&scene=21#wechat_redirect)
+- [彻底理解浏览器缓存](https://juejin.cn/post/6844903593275817998)
+- [浏览器缓存机制剖析](https://mp.weixin.qq.com/s?__biz=MjM5MTA1MjAxMQ==&mid=2651226347&idx=1&sn=6dbccc54406f0b075671884b738b1e88&chksm=bd49596f8a3ed079f79cda4b90ac3cb3b1dbdb5bfb8aade962a16a323563bf26a0c75b0a5d7b&scene=21#wechat_redirect)
