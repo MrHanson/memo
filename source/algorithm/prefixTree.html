@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>字典树</title>
+    <style></style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="word-enter">
+        <input class="word-input" type="text" placeholder="enter word" />
+        <button class="word-btn">+</button>
+      </div>
+      <ul id="predict-word-list"></ul>
+    </div>
+    <script type="text/javascript">
+      class PrefixTreeNode {
+        constructor(value) {
+          this.children = {}
+          this.endWord = null
+          this.value = value
+        }
+      }
+
+      class PrefixTree extends PrefixTreeNode {
+        constructor() {
+          super(null)
+        }
+
+        addWord(str) {
+          const addWordHelper = (node, str) => {
+            if (str && !node.children[str[0]]) {
+              node.children[str[0]] = new PrefixTreeNode(str[0])
+            }
+            if (!str.length) {
+              node.endWord = true
+            } else {
+              addWordHelper(node.children[str[0]], str.slice(1))
+            }
+          }
+          addWordHelper(this, str)
+        }
+
+        predictWord(str) {
+          let allWords = []
+
+          let allWordsHelper = function(targetStr, tree, matchKeys = '') {
+            for (let k in tree.children) {
+              const child = tree.children[k]
+              // 过滤首字母无效匹配节点
+              if (!matchKeys && targetStr.indexOf(k) < 0) continue
+              if (child.endWord) {
+                allWords.push(matchKeys + k)
+              }
+              allWordsHelper(targetStr, child, matchKeys + k)
+            }
+          }
+
+          allWordsHelper(str, this)
+
+          return allWords
+        }
+      }
+
+      const prefixTree = new PrefixTree()
+
+      const inputRef = document.querySelector('.word-input')
+      const wordBtnRef = document.querySelector('.word-btn')
+
+      inputRef.addEventListener('input', function onWordInput() {
+        const str = inputRef.value
+        if (!str) return
+        renderPredictWord(str)
+      })
+      wordBtnRef.addEventListener('click', function onWordAddition() {
+        const str = inputRef.value
+        if (!str) return
+        prefixTree.addWord(str)
+        console.log('prefixTree', prefixTree)
+        inputRef.value = ''
+      })
+
+      function renderPredictWord(str) {
+        const pwListRef = document.getElementById('predict-word-list')
+        removeAllChildNodes(pwListRef)
+
+        const wordList = prefixTree.predictWord(str)
+        if (!wordList.length) return
+
+        const lis = wordList.map(s => {
+          const dom = document.createElement('li')
+          dom.innerHTML = s
+          return dom
+        })
+        lis.forEach(dom => pwListRef.appendChild(dom))
+      }
+
+      function removeAllChildNodes(parent) {
+        while (parent.children[0]) {
+          parent.removeChild(parent.children[0])
+        }
+      }
+    </script>
+  </body>
+</html>
