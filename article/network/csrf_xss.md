@@ -77,3 +77,17 @@ categories:
 > 应对措施：Cookie HttpOnly，[内容安全策略( CSP )](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CSP)
 
 ## CSRF（Cross-site request forgery）跨站请求伪造
+
+> 黑客利用了用户的登录状态的跨站请求
+
+### 如何防护
+
+- Cookie 的 [SameSite](https://web.dev/samesite-cookies-explained/)
+
+- 验证请求的来源站点
+  
+  - 请求头 Referer
+
+  - 请求头 Origin
+
+- Token
