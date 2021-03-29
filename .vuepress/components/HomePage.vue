@@ -15,9 +15,6 @@
           <a target="_black" href="https://github.com/mrhanson">
             <i class="iconfont reco-github"></i>
           </a>
-          <a target="_black" href="https://space.bilibili.com/40467270">
-            <i class="iconfont reco-bilibili"></i>
-          </a>
         </div>
       </ModuleTransition>
     </section>
