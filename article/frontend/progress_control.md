@@ -15,24 +15,18 @@ categories:
 LazyMan('Hank')
 // Hi! This is Hank!
 
-LazyMan('Hank')
-  .sleep(10)
-  .eat('dinner')
+LazyMan('Hank').sleep(10).eat('dinner')
 // Hi! This is Hank!
 // 等待 10s
 // Wake up after 10
 // Eat dinner~
 
-LazyMan('Hank')
-  .eat('dinner')
-  .eat('supper')
+LazyMan('Hank').eat('dinner').eat('supper')
 // Hi! This is Hank!
 // Eat dinner
 // Eat supper~
 
-LazyMan('Hank')
-  .sleepFirst(5)
-  .eat('supper')
+LazyMan('Hank').sleepFirst(5).eat('supper')
 // 等待5s
 // Wake up after 5
 // Hi! This is Hank!
@@ -201,7 +195,7 @@ function compose(middleware) {
    * @api public
    */
 
-  return function(context, next) {
+  return function (context, next) {
     // last called middleware # 记录最后调用中间件的索引
     let index = -1
     // 执行第一个中间件
